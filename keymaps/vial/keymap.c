@@ -6,7 +6,7 @@ enum custom_keycodes {
     GAME_2345    = QK_KB_1, // Vial User 1 (2345 연타)
     GAME_12345   = QK_KB_2, // Vial User 2 (12345 연타)
     GAME_45      = QK_KB_3, // Vial User 3 (45 연타)
-    GAME_L_MOUSE = QK_KB_4, // Vial User 4 (마우스 좌클릭 20ms 연타)
+    GAME_L_MOUSE = QK_KB_4, // Vial User 4 (마우스 좌클릭 50ms 최적 연타)
 };
 
 // 2. 키맵 (기본 레이아웃 및 커스텀 키 배치)
@@ -171,7 +171,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-        // GAME_L_MOUSE (자홍색, 마우스 20ms 연타)
+        // GAME_L_MOUSE (자홍색, 마우스 50ms 디아블로4 최적 연타)
         case GAME_L_MOUSE:
             if (record->event.pressed) {
                 gamelmouse_on = !gamelmouse_on;
@@ -218,8 +218,8 @@ void matrix_scan_user(void) {
         SEND_STRING("45");
     }
 
-    // 마우스 좌클릭 20ms 연타
-    if (gamelmouse_on && timer_elapsed(gamelmouse_timer) > 20) {
+    // 마우스 좌클릭 50ms 연타 (디아블로4 루팅 최적 속도: 초당 20회)
+    if (gamelmouse_on && timer_elapsed(gamelmouse_timer) > 50) {
         gamelmouse_timer = timer_read();
         tap_code(KC_MS_BTN1);
     }

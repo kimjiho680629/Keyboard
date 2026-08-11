@@ -51,7 +51,7 @@
     },
     {
       "name": "Game L-Mouse",
-      "title": "Toggle Left Mouse Click (20ms)",
+      "title": "Toggle Left Mouse Click (50ms D4)",
       "shortName": "GMLMS",
       "keycode": "0x7E44"
     }
