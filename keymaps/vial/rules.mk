@@ -1,0 +1,15 @@
+VIA_ENABLE = yes
+VIAL_ENABLE = yes
+
+# LED 및 하드웨어 설정
+RGBLIGHT_ENABLE = yes
+WS2812_DRIVER = vendor
+MOUSEKEY_ENABLE = yes
+
+# 링커 에러 방지
+LTO_ENABLE = no
+
+# 기능 설정
+COMBO_ENABLE = yes
+TAP_DANCE_ENABLE = yes
+KEY_OVERRIDE_ENABLE = no

@@ -1,0 +1,4 @@
+vial-qmk/
+*.log
+*.tmp
+.DS_Store

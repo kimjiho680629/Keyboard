@@ -1,0 +1,33 @@
+#pragma once
+
+// 1. RP2040 하드웨어 기본 설정
+#define SERIAL_USART_FULL_DUPLEX
+#define SERIAL_USART_TX_PIN GP0
+#define SERIAL_USART_RX_PIN GP1
+#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
+#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_LED GP17
+
+// 2. LED 하드웨어 설정
+#define WS2812_DI_PIN GP16
+#define RGBLIGHT_LED_COUNT 1
+
+// 3. LED 기능 설정
+#define RGBLIGHT_LAYERS
+#define RGBLIGHT_LAYERS_RETAIN_STATE
+#define RGBLIGHT_MAX_LAYERS 16
+#define RGBLIGHT_SLEEP
+#define RGBLIGHT_HUE_STEP 8
+#define RGBLIGHT_SAT_STEP 8
+#define RGBLIGHT_VAL_STEP 8
+#define RGBLIGHT_LIMIT_VAL 150
+
+// 스플릿 키보드 상태 동기화 옵션
+#define SPLIT_LAYER_STATE_ENABLE
+#define SPLIT_LED_STATE_ENABLE    // Caps Lock 상태를 양쪽으로 전송
+#define SPLIT_MODS_ENABLE         // Shift, Ctrl 상태 동기화
+#define RGBLIGHT_SPLIT
+
+// 4. Vial 설정
+#define VIAL_KEYBOARD_UID {0x8F, 0x1E, 0x61, 0x9B, 0x0E, 0x22, 0x58, 0x3C}
+#define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
+#define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
