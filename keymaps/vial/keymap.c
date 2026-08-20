@@ -97,7 +97,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 #endif
 
-// 4. 게임 토글 타이머 변수
+// 4. 게임 토글 타이머 변수 및 순환 시퀀스
 static bool game345_on     = false;
 static bool game2345_on    = false;
 static bool game12345_on   = false;
@@ -109,6 +109,21 @@ static uint16_t game2345_timer   = 0;
 static uint16_t game12345_timer  = 0;
 static uint16_t game45_timer     = 0;
 static uint16_t gamelmouse_timer = 0;
+
+static uint8_t seq_idx_345   = 0;
+static uint8_t seq_idx_2345  = 0;
+static uint8_t seq_idx_12345 = 0;
+static uint8_t seq_idx_45    = 0;
+
+static const uint16_t seq_345[]   = {KC_3, KC_4, KC_5};
+static const uint16_t seq_2345[]  = {KC_2, KC_3, KC_4, KC_5};
+static const uint16_t seq_12345[] = {KC_1, KC_2, KC_3, KC_4, KC_5};
+static const uint16_t seq_45[]    = {KC_4, KC_5};
+
+static inline void tap_fast(uint16_t keycode) {
+    register_code16(keycode);
+    unregister_code16(keycode);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -134,7 +149,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #ifdef RGBLIGHT_ENABLE
                 rgblight_set_layer_state(5, game345_on);
                 #endif
-                if (game345_on) game345_timer = timer_read();
+                seq_idx_345 = 0;
+                if (game345_on) {
+                    game345_timer = timer_read();
+                } else {
+                    unregister_code16(KC_3);
+                    unregister_code16(KC_4);
+                    unregister_code16(KC_5);
+                }
             }
             return false;
 
@@ -145,7 +167,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #ifdef RGBLIGHT_ENABLE
                 rgblight_set_layer_state(6, game2345_on);
                 #endif
-                if (game2345_on) game2345_timer = timer_read();
+                seq_idx_2345 = 0;
+                if (game2345_on) {
+                    game2345_timer = timer_read();
+                } else {
+                    unregister_code16(KC_2);
+                    unregister_code16(KC_3);
+                    unregister_code16(KC_4);
+                    unregister_code16(KC_5);
+                }
             }
             return false;
 
@@ -156,7 +186,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #ifdef RGBLIGHT_ENABLE
                 rgblight_set_layer_state(7, game12345_on);
                 #endif
-                if (game12345_on) game12345_timer = timer_read();
+                seq_idx_12345 = 0;
+                if (game12345_on) {
+                    game12345_timer = timer_read();
+                } else {
+                    unregister_code16(KC_1);
+                    unregister_code16(KC_2);
+                    unregister_code16(KC_3);
+                    unregister_code16(KC_4);
+                    unregister_code16(KC_5);
+                }
             }
             return false;
 
@@ -167,7 +206,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #ifdef RGBLIGHT_ENABLE
                 rgblight_set_layer_state(8, game45_on);
                 #endif
-                if (game45_on) game45_timer = timer_read();
+                seq_idx_45 = 0;
+                if (game45_on) {
+                    game45_timer = timer_read();
+                } else {
+                    unregister_code16(KC_4);
+                    unregister_code16(KC_5);
+                }
             }
             return false;
 
@@ -178,16 +223,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #ifdef RGBLIGHT_ENABLE
                 rgblight_set_layer_state(9, gamelmouse_on);
                 #endif
-                if (gamelmouse_on) gamelmouse_timer = timer_read();
+                if (gamelmouse_on) {
+                    gamelmouse_timer = timer_read();
+                } else {
+                    unregister_code16(KC_MS_BTN1);
+                }
             }
             return false;
     }
     return true;
-}
-
-static inline void tap_fast(uint16_t keycode) {
-    register_code16(keycode);
-    unregister_code16(keycode);
 }
 
 void matrix_scan_user(void) {
@@ -199,38 +243,32 @@ void matrix_scan_user(void) {
     }
     #endif
 
-    // 345 25ms 무지연 논블로킹 연타
+    // 345 순환 틱 무지연 연타 (25ms마다 순차 1키 전송 -> OS 버퍼링 제로)
     if (game345_on && timer_elapsed(game345_timer) >= 25) {
         game345_timer = timer_read();
-        tap_fast(KC_3);
-        tap_fast(KC_4);
-        tap_fast(KC_5);
+        tap_fast(seq_345[seq_idx_345]);
+        seq_idx_345 = (seq_idx_345 + 1) % 3;
     }
 
-    // 2345 25ms 무지연 논블로킹 연타
+    // 2345 순환 틱 무지연 연타 (25ms마다 순차 1키 전송)
     if (game2345_on && timer_elapsed(game2345_timer) >= 25) {
         game2345_timer = timer_read();
-        tap_fast(KC_2);
-        tap_fast(KC_3);
-        tap_fast(KC_4);
-        tap_fast(KC_5);
+        tap_fast(seq_2345[seq_idx_2345]);
+        seq_idx_2345 = (seq_idx_2345 + 1) % 4;
     }
 
-    // 12345 25ms 무지연 논블로킹 연타
+    // 12345 순환 틱 무지연 연타 (25ms마다 순차 1키 전송)
     if (game12345_on && timer_elapsed(game12345_timer) >= 25) {
         game12345_timer = timer_read();
-        tap_fast(KC_1);
-        tap_fast(KC_2);
-        tap_fast(KC_3);
-        tap_fast(KC_4);
-        tap_fast(KC_5);
+        tap_fast(seq_12345[seq_idx_12345]);
+        seq_idx_12345 = (seq_idx_12345 + 1) % 5;
     }
 
-    // 45 25ms 무지연 논블로킹 연타
+    // 45 순환 틱 무지연 연타 (25ms마다 순차 1키 전송)
     if (game45_on && timer_elapsed(game45_timer) >= 25) {
         game45_timer = timer_read();
-        tap_fast(KC_4);
-        tap_fast(KC_5);
+        tap_fast(seq_45[seq_idx_45]);
+        seq_idx_45 = (seq_idx_45 + 1) % 2;
     }
 
     // 마우스 좌클릭 50ms 무지연 논블로킹 연타 (디아블로4 루팅 최적 속도: 초당 20회)
@@ -239,4 +277,5 @@ void matrix_scan_user(void) {
         tap_fast(KC_MS_BTN1);
     }
 }
+
 
