@@ -4,6 +4,10 @@ set -e
 BUILD_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 QMK_DIR="$BUILD_DIR/vial-qmk"
 
+if [ -d "$HOME/.local/opt/arm-toolchain/bin" ]; then
+    export PATH="$HOME/.local/opt/arm-toolchain/bin:$PATH"
+fi
+
 echo "=== Silakka54 Firmware Build Script ==="
 
 if [ ! -d "$QMK_DIR" ]; then

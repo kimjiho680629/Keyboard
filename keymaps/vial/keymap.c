@@ -185,6 +185,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+static inline void tap_fast(uint16_t keycode) {
+    register_code16(keycode);
+    unregister_code16(keycode);
+}
+
 void matrix_scan_user(void) {
     #ifdef RGBLIGHT_ENABLE
     if (host_keyboard_led_state().caps_lock) {
@@ -194,33 +199,44 @@ void matrix_scan_user(void) {
     }
     #endif
 
-    // 345 25ms 연타
-    if (game345_on && timer_elapsed(game345_timer) > 25) {
+    // 345 25ms 무지연 논블로킹 연타
+    if (game345_on && timer_elapsed(game345_timer) >= 25) {
         game345_timer = timer_read();
-        SEND_STRING("345");
+        tap_fast(KC_3);
+        tap_fast(KC_4);
+        tap_fast(KC_5);
     }
 
-    // 2345 25ms 연타
-    if (game2345_on && timer_elapsed(game2345_timer) > 25) {
+    // 2345 25ms 무지연 논블로킹 연타
+    if (game2345_on && timer_elapsed(game2345_timer) >= 25) {
         game2345_timer = timer_read();
-        SEND_STRING("2345");
+        tap_fast(KC_2);
+        tap_fast(KC_3);
+        tap_fast(KC_4);
+        tap_fast(KC_5);
     }
 
-    // 12345 25ms 연타
-    if (game12345_on && timer_elapsed(game12345_timer) > 25) {
+    // 12345 25ms 무지연 논블로킹 연타
+    if (game12345_on && timer_elapsed(game12345_timer) >= 25) {
         game12345_timer = timer_read();
-        SEND_STRING("12345");
+        tap_fast(KC_1);
+        tap_fast(KC_2);
+        tap_fast(KC_3);
+        tap_fast(KC_4);
+        tap_fast(KC_5);
     }
 
-    // 45 25ms 연타
-    if (game45_on && timer_elapsed(game45_timer) > 25) {
+    // 45 25ms 무지연 논블로킹 연타
+    if (game45_on && timer_elapsed(game45_timer) >= 25) {
         game45_timer = timer_read();
-        SEND_STRING("45");
+        tap_fast(KC_4);
+        tap_fast(KC_5);
     }
 
-    // 마우스 좌클릭 50ms 연타 (디아블로4 루팅 최적 속도: 초당 20회)
-    if (gamelmouse_on && timer_elapsed(gamelmouse_timer) > 50) {
+    // 마우스 좌클릭 50ms 무지연 논블로킹 연타 (디아블로4 루팅 최적 속도: 초당 20회)
+    if (gamelmouse_on && timer_elapsed(gamelmouse_timer) >= 50) {
         gamelmouse_timer = timer_read();
-        tap_code(KC_MS_BTN1);
+        tap_fast(KC_MS_BTN1);
     }
 }
+
